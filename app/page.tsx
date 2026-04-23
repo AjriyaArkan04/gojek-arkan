@@ -135,7 +135,7 @@ export default function GojekLanding() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -148,8 +148,8 @@ export default function GojekLanding() {
           --grey-200: #E8E8E8;
           --grey-400: #9A9A9A;
           --grey-700: #3A3A3A;
-          --font-body: 'Plus Jakarta Sans', sans-serif;
-          --font-display: 'Syne', sans-serif;
+          --font-body: 'DM Sans', sans-serif;
+          --font-display: 'DM Serif Display', serif;
           --radius: 16px;
           --shadow: 0 2px 24px rgba(0,0,0,0.07);
           --shadow-lg: 0 8px 48px rgba(0,0,0,0.12);
@@ -169,14 +169,15 @@ export default function GojekLanding() {
         /* Custom cursor */
         .custom-cursor {
           position: fixed;
-          width: 12px; height: 12px;
+          width: 14px; height: 14px;
           background: var(--green);
+          border: 2px solid white;
           border-radius: 50%;
           pointer-events: none;
           z-index: 9999;
           transform: translate(-50%, -50%);
           transition: transform 0.1s, opacity 0.2s;
-          mix-blend-mode: multiply;
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 0 8px rgba(0,170,19,0.6);
         }
         .custom-cursor.hidden { opacity: 0; }
 
@@ -342,7 +343,7 @@ export default function GojekLanding() {
 
         .hero-title {
           font-family: var(--font-display);
-          font-size: clamp(2.8rem, 5vw, 4.5rem);
+          font-size: clamp(2.6rem, 5vw, 4.2rem);
           font-weight: 800;
           line-height: 1.08;
           letter-spacing: -1.5px;
