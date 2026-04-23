@@ -1,65 +1,1038 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useRef } from "react";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface Service {
+  id: string;
+  name: string;
+  emoji: string;
+  desc: string;
+  category: "transport" | "food" | "business";
+  color: string;
+}
+
+interface Stat {
+  value: string;
+  label: string;
+  suffix?: string;
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const SERVICES: Service[] = [
+  { id: "goride", name: "GoRide", emoji: "🏍️", desc: "Ojek online cepat dan terpercaya ke mana pun kamu mau", category: "transport", color: "#00AA13" },
+  { id: "gocar", name: "GoCar", emoji: "🚗", desc: "Mobil nyaman untuk perjalanan harian kamu", category: "transport", color: "#00AA13" },
+  { id: "gosend", name: "GoSend", emoji: "📦", desc: "Kirim barang dan dokumen dalam hitungan menit", category: "transport", color: "#00AA13" },
+  { id: "gofood", name: "GoFood", emoji: "🍜", desc: "Pesan makanan favoritmu dari ratusan restoran terdekat", category: "food", color: "#E53935" },
+  { id: "gomart", name: "GoMart", emoji: "🛒", desc: "Belanja kebutuhan sehari-hari langsung dari rumah", category: "food", color: "#E53935" },
+  { id: "gobiz", name: "GoBiz", emoji: "💼", desc: "Solusi lengkap untuk kelola dan kembangkan bisnismu", category: "business", color: "#1565C0" },
+];
+
+const STATS: Stat[] = [
+  { value: "3.1", label: "Juta Mitra Driver", suffix: "jt+" },
+  { value: "20.1", label: "Juta Mitra Usaha", suffix: "jt+" },
+  { value: "2", label: "Negara Operasional", suffix: " negara" },
+  { value: "190", label: "Kota di Indonesia", suffix: "+ kota" },
+];
+
+const NAV_LINKS = ["Layanan", "Mitra", "Karir", "Blog"];
+
+// ─── Hooks ────────────────────────────────────────────────────────────────────
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+function useCounter(target: number, active: boolean, duration = 1800) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let start: number | null = null;
+    const step = (ts: number) => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setCount(parseFloat((eased * target).toFixed(1)));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [active, target, duration]);
+  return count;
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+function AnimatedStat({ stat, active }: { stat: Stat; active: boolean }) {
+  const num = useCounter(parseFloat(stat.value), active);
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="stat-card">
+      <span className="stat-number">
+        {num % 1 === 0 ? num.toFixed(0) : num.toFixed(1)}
+        {stat.suffix}
+      </span>
+      <span className="stat-label">{stat.label}</span>
     </div>
+  );
+}
+
+function ServiceCard({ service, index }: { service: Service; index: number }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      className={`service-card ${hovered ? "hovered" : ""}`}
+      style={{ animationDelay: `${index * 80}ms` }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="service-emoji">{service.emoji}</div>
+      <h3 className="service-name">{service.name}</h3>
+      <p className="service-desc">{service.desc}</p>
+      <div className="service-arrow" style={{ color: service.color }}>→</div>
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+export default function GojekLanding() {
+  const [activeCategory, setActiveCategory] = useState<"all" | "transport" | "food" | "business">("all");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [cursorVisible, setCursorVisible] = useState(false);
+
+  const statsSection = useInView();
+  const heroSection = useInView(0.01);
+
+  const filtered = activeCategory === "all" ? SERVICES : SERVICES.filter((s) => s.category === activeCategory);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+      setCursorVisible(true);
+    };
+    const onLeave = () => setCursorVisible(false);
+    window.addEventListener("mousemove", onMove);
+    document.body.addEventListener("mouseleave", onLeave);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      document.body.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --green: #00AA13;
+          --green-dark: #008A0E;
+          --black: #0D0D0D;
+          --white: #FAFAFA;
+          --grey-100: #F5F5F5;
+          --grey-200: #E8E8E8;
+          --grey-400: #9A9A9A;
+          --grey-700: #3A3A3A;
+          --font-body: 'Plus Jakarta Sans', sans-serif;
+          --font-display: 'Syne', sans-serif;
+          --radius: 16px;
+          --shadow: 0 2px 24px rgba(0,0,0,0.07);
+          --shadow-lg: 0 8px 48px rgba(0,0,0,0.12);
+          --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+          font-family: var(--font-body);
+          background: var(--white);
+          color: var(--black);
+          overflow-x: hidden;
+          cursor: none;
+        }
+
+        /* Custom cursor */
+        .custom-cursor {
+          position: fixed;
+          width: 12px; height: 12px;
+          background: var(--green);
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 9999;
+          transform: translate(-50%, -50%);
+          transition: transform 0.1s, opacity 0.2s;
+          mix-blend-mode: multiply;
+        }
+        .custom-cursor.hidden { opacity: 0; }
+
+        /* Navbar */
+        .navbar {
+          position: fixed; top: 0; left: 0; right: 0;
+          z-index: 100;
+          padding: 0 5vw;
+          height: 64px;
+          display: flex; align-items: center; justify-content: space-between;
+          transition: background var(--transition), box-shadow var(--transition);
+        }
+        .navbar.scrolled {
+          background: rgba(250,250,250,0.92);
+          backdrop-filter: blur(16px);
+          box-shadow: 0 1px 0 var(--grey-200);
+        }
+        .navbar.top { background: transparent; }
+
+        .logo {
+          display: flex; align-items: center; gap: 10px;
+          font-family: var(--font-display);
+          font-size: 1.4rem;
+          font-weight: 800;
+          color: var(--green);
+          text-decoration: none;
+          letter-spacing: -0.5px;
+        }
+        .logo-dot {
+          width: 10px; height: 10px;
+          background: var(--green);
+          border-radius: 50%;
+          display: inline-block;
+        }
+
+        .nav-links {
+          display: flex; align-items: center; gap: 32px;
+          list-style: none;
+        }
+        .nav-links a {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--grey-700);
+          text-decoration: none;
+          transition: color var(--transition);
+          position: relative;
+        }
+        .nav-links a::after {
+          content: '';
+          position: absolute; bottom: -2px; left: 0; right: 100%;
+          height: 2px; background: var(--green);
+          transition: right var(--transition);
+        }
+        .nav-links a:hover { color: var(--black); }
+        .nav-links a:hover::after { right: 0; }
+
+        .nav-cta {
+          background: var(--green);
+          color: white !important;
+          padding: 9px 20px;
+          border-radius: 100px;
+          font-weight: 700 !important;
+          font-size: 0.85rem !important;
+          transition: background var(--transition), transform var(--transition) !important;
+        }
+        .nav-cta:hover { background: var(--green-dark) !important; transform: scale(1.04); }
+        .nav-cta::after { display: none !important; }
+
+        .hamburger {
+          display: none;
+          flex-direction: column; gap: 5px;
+          background: none; border: none;
+          cursor: pointer; padding: 8px;
+        }
+        .hamburger span {
+          display: block; width: 22px; height: 2px;
+          background: var(--black);
+          border-radius: 2px;
+          transition: var(--transition);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+          background: var(--white);
+          z-index: 90;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          gap: 32px;
+          transform: translateY(-100%);
+          transition: transform var(--transition);
+        }
+        .mobile-menu.open { transform: translateY(0); }
+        .mobile-menu a {
+          font-family: var(--font-display);
+          font-size: 2.5rem;
+          font-weight: 800;
+          color: var(--black);
+          text-decoration: none;
+          transition: color var(--transition);
+        }
+        .mobile-menu a:hover { color: var(--green); }
+
+        /* Hero */
+        .hero {
+          min-height: 100vh;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          align-items: center;
+          padding: 100px 5vw 60px;
+          gap: 48px;
+          background: var(--white);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .hero-bg-shape {
+          position: absolute;
+          width: 600px; height: 600px;
+          background: #E8F5E9;
+          border-radius: 50%;
+          top: -150px; right: -200px;
+          z-index: 0;
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+
+        .hero-badge {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: #E8F5E9;
+          color: var(--green-dark);
+          font-size: 0.78rem;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 6px 14px;
+          border-radius: 100px;
+          margin-bottom: 24px;
+          opacity: 0;
+          animation: fadeUp 0.6s 0.2s forwards;
+        }
+        .hero-badge-dot {
+          width: 6px; height: 6px;
+          background: var(--green);
+          border-radius: 50%;
+          animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .hero-title {
+          font-family: var(--font-display);
+          font-size: clamp(2.8rem, 5vw, 4.5rem);
+          font-weight: 800;
+          line-height: 1.08;
+          letter-spacing: -1.5px;
+          color: var(--black);
+          margin-bottom: 20px;
+          opacity: 0;
+          animation: fadeUp 0.7s 0.35s forwards;
+        }
+        .hero-title .accent { color: var(--green); }
+
+        .hero-sub {
+          font-size: 1.05rem;
+          color: var(--grey-400);
+          line-height: 1.65;
+          max-width: 420px;
+          margin-bottom: 36px;
+          opacity: 0;
+          animation: fadeUp 0.7s 0.5s forwards;
+        }
+
+        .hero-actions {
+          display: flex; gap: 14px; flex-wrap: wrap;
+          opacity: 0;
+          animation: fadeUp 0.7s 0.65s forwards;
+        }
+
+        .btn-primary {
+          background: var(--green);
+          color: white;
+          border: none;
+          padding: 14px 28px;
+          border-radius: 100px;
+          font-family: var(--font-body);
+          font-size: 0.95rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+          text-decoration: none; display: inline-block;
+        }
+        .btn-primary:hover {
+          background: var(--green-dark);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0,170,19,0.3);
+        }
+
+        .btn-secondary {
+          background: transparent;
+          color: var(--black);
+          border: 2px solid var(--grey-200);
+          padding: 14px 28px;
+          border-radius: 100px;
+          font-family: var(--font-body);
+          font-size: 0.95rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: border-color var(--transition), transform var(--transition);
+          text-decoration: none; display: inline-block;
+        }
+        .btn-secondary:hover {
+          border-color: var(--green);
+          transform: translateY(-2px);
+        }
+
+        .hero-visual {
+          position: relative; z-index: 1;
+          display: flex; align-items: center; justify-content: center;
+          opacity: 0;
+          animation: fadeIn 1s 0.8s forwards;
+        }
+
+        .phone-mockup {
+          width: 280px;
+          background: var(--black);
+          border-radius: 36px;
+          padding: 16px;
+          box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.1);
+          position: relative;
+          animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-14px); }
+        }
+
+        .phone-notch {
+          width: 80px; height: 22px;
+          background: #1a1a1a;
+          border-radius: 20px;
+          margin: 0 auto 16px;
+        }
+
+        .phone-screen {
+          background: #0D0D0D;
+          border-radius: 24px;
+          padding: 20px 16px;
+          min-height: 460px;
+        }
+
+        .phone-app-grid {
+          display: grid; grid-template-columns: repeat(4, 1fr);
+          gap: 10px; margin-top: 8px;
+        }
+
+        .phone-app-icon {
+          aspect-ratio: 1;
+          border-radius: 14px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.3rem;
+          transition: transform 0.2s;
+        }
+        .phone-app-icon:hover { transform: scale(1.1); }
+
+        .phone-greeting {
+          font-size: 0.6rem;
+          color: rgba(255,255,255,0.5);
+          margin-bottom: 4px;
+          font-family: var(--font-body);
+        }
+        .phone-name {
+          font-family: var(--font-display);
+          font-size: 1rem;
+          color: white;
+          margin-bottom: 16px;
+        }
+
+        .phone-balance-card {
+          background: var(--green);
+          border-radius: 16px;
+          padding: 14px;
+          margin-bottom: 16px;
+        }
+        .phone-balance-label {
+          font-size: 0.55rem;
+          color: rgba(255,255,255,0.8);
+          font-family: var(--font-body);
+        }
+        .phone-balance-amount {
+          font-family: var(--font-display);
+          font-size: 1.2rem;
+          color: white;
+          margin-top: 2px;
+        }
+
+        .phone-quick-order {
+          background: #1a1a1a;
+          border-radius: 14px;
+          padding: 12px;
+          margin-top: 14px;
+          display: flex; align-items: center; gap: 10px;
+        }
+        .phone-quick-icon {
+          width: 36px; height: 36px;
+          background: var(--green);
+          border-radius: 10px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1rem;
+        }
+        .phone-quick-text {
+          font-size: 0.6rem;
+          color: rgba(255,255,255,0.6);
+          font-family: var(--font-body);
+        }
+        .phone-quick-title {
+          font-size: 0.75rem;
+          color: white;
+          font-weight: 600;
+          margin-bottom: 2px;
+          font-family: var(--font-body);
+        }
+
+        .floating-badge {
+          position: absolute;
+          background: white;
+          border-radius: 100px;
+          padding: 8px 14px;
+          box-shadow: var(--shadow-lg);
+          display: flex; align-items: center; gap: 8px;
+          font-size: 0.78rem;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+        .fb-1 { top: 20%; right: -40px; animation: float 3.5s 0.5s ease-in-out infinite; }
+        .fb-2 { bottom: 25%; left: -50px; animation: float 4s 1s ease-in-out infinite; }
+        .fb-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* Stats */
+        .stats-section {
+          background: var(--black);
+          padding: 80px 5vw;
+        }
+        .stats-label {
+          font-size: 0.8rem;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.4);
+          text-align: center;
+          margin-bottom: 48px;
+          font-weight: 600;
+        }
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 2px;
+        }
+        .stat-card {
+          display: flex; flex-direction: column;
+          align-items: center;
+          padding: 40px 24px;
+          background: #1a1a1a;
+          transition: background var(--transition);
+        }
+        .stat-card:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+        .stat-card:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+        .stat-card:hover { background: #222; }
+        .stat-number {
+          font-family: var(--font-display);
+          font-size: clamp(2rem, 3.5vw, 3rem);
+          font-weight: 800;
+          color: var(--green);
+          letter-spacing: -1px;
+        }
+        .stat-label {
+          font-size: 0.82rem;
+          color: rgba(255,255,255,0.5);
+          margin-top: 6px;
+          text-align: center;
+          font-weight: 500;
+        }
+
+        /* Services */
+        .services-section {
+          padding: 96px 5vw;
+          background: var(--white);
+        }
+        .section-header {
+          display: flex; align-items: flex-end; justify-content: space-between;
+          margin-bottom: 48px;
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+        .section-eyebrow {
+          font-size: 0.75rem;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: var(--green);
+          font-weight: 700;
+          margin-bottom: 10px;
+        }
+        .section-title {
+          font-family: var(--font-display);
+          font-size: clamp(2rem, 3.5vw, 2.8rem);
+          font-weight: 800;
+          letter-spacing: -1px;
+          line-height: 1.1;
+        }
+        .category-tabs {
+          display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .tab {
+          padding: 8px 18px;
+          border-radius: 100px;
+          border: 2px solid var(--grey-200);
+          background: transparent;
+          font-family: var(--font-body);
+          font-size: 0.82rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all var(--transition);
+          color: var(--grey-700);
+        }
+        .tab:hover { border-color: var(--green); color: var(--green); }
+        .tab.active { background: var(--green); border-color: var(--green); color: white; }
+
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+
+        .service-card {
+          background: var(--grey-100);
+          border-radius: var(--radius);
+          padding: 28px 24px;
+          cursor: pointer;
+          transition: all var(--transition);
+          position: relative;
+          overflow: hidden;
+          border: 2px solid transparent;
+          opacity: 0;
+          animation: fadeUp 0.5s forwards;
+        }
+        .service-card::before {
+          content: '';
+          position: absolute; inset: 0;
+          background: var(--green);
+          opacity: 0;
+          transition: opacity var(--transition);
+        }
+        .service-card.hovered {
+          border-color: var(--green);
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
+        }
+        .service-card.hovered::before { opacity: 0.04; }
+
+        .service-emoji { font-size: 2rem; margin-bottom: 12px; position: relative; z-index: 1; }
+        .service-name {
+          font-family: var(--font-display);
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin-bottom: 8px;
+          position: relative; z-index: 1;
+        }
+        .service-desc {
+          font-size: 0.85rem;
+          color: var(--grey-400);
+          line-height: 1.55;
+          position: relative; z-index: 1;
+        }
+        .service-arrow {
+          font-size: 1.2rem;
+          margin-top: 16px;
+          font-weight: 800;
+          position: relative; z-index: 1;
+          transition: transform var(--transition);
+        }
+        .service-card.hovered .service-arrow { transform: translateX(4px); }
+
+        /* Partners */
+        .partners-section {
+          background: var(--grey-100);
+          padding: 80px 5vw;
+        }
+        .partner-scroll {
+          overflow: hidden; position: relative;
+          margin-top: 40px;
+        }
+        .partner-track {
+          display: flex; gap: 16px;
+          animation: scroll 20s linear infinite;
+          width: max-content;
+        }
+        @keyframes scroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .partner-card {
+          background: white;
+          border-radius: 12px;
+          padding: 16px 28px;
+          font-weight: 700;
+          font-size: 0.9rem;
+          color: var(--grey-700);
+          white-space: nowrap;
+          border: 1px solid var(--grey-200);
+          transition: border-color var(--transition), color var(--transition);
+        }
+        .partner-card:hover { border-color: var(--green); color: var(--green); }
+
+        /* CTA */
+        .cta-section {
+          padding: 96px 5vw;
+          background: var(--white);
+          text-align: center;
+        }
+        .cta-inner {
+          background: var(--black);
+          border-radius: 24px;
+          padding: 80px 5vw;
+          position: relative;
+          overflow: hidden;
+        }
+        .cta-pattern {
+          position: absolute; inset: 0;
+          background-image: radial-gradient(circle, rgba(0,170,19,0.12) 1px, transparent 1px);
+          background-size: 32px 32px;
+        }
+        .cta-title {
+          font-family: var(--font-display);
+          font-size: clamp(2rem, 4vw, 3.2rem);
+          font-weight: 800;
+          color: white;
+          letter-spacing: -1px;
+          margin-bottom: 16px;
+          position: relative;
+        }
+        .cta-sub {
+          color: rgba(255,255,255,0.5);
+          font-size: 1rem;
+          margin-bottom: 36px;
+          position: relative;
+        }
+        .cta-buttons {
+          display: flex; gap: 14px;
+          justify-content: center; flex-wrap: wrap;
+          position: relative;
+        }
+        .app-btn {
+          background: white;
+          color: var(--black);
+          border: none;
+          padding: 14px 24px;
+          border-radius: 14px;
+          font-family: var(--font-body);
+          font-weight: 700;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: transform var(--transition), box-shadow var(--transition);
+          display: flex; align-items: center; gap: 10px;
+        }
+        .app-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+        .app-btn-icon { font-size: 1.3rem; }
+
+        /* Footer */
+        .footer {
+          background: var(--black);
+          padding: 60px 5vw 32px;
+          border-top: 1px solid #1a1a1a;
+        }
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 48px;
+          margin-bottom: 48px;
+        }
+        .footer-brand {
+          font-family: var(--font-display);
+          font-size: 1.6rem;
+          font-weight: 800;
+          color: var(--green);
+          margin-bottom: 14px;
+        }
+        .footer-tagline {
+          font-size: 0.85rem;
+          color: rgba(255,255,255,0.4);
+          line-height: 1.6;
+          max-width: 220px;
+        }
+        .footer-heading {
+          font-size: 0.75rem;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.3);
+          font-weight: 700;
+          margin-bottom: 20px;
+        }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a {
+          font-size: 0.88rem;
+          color: rgba(255,255,255,0.6);
+          text-decoration: none;
+          transition: color var(--transition);
+        }
+        .footer-links a:hover { color: var(--green); }
+        .footer-bottom {
+          border-top: 1px solid #1a1a1a;
+          padding-top: 24px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap; gap: 12px;
+        }
+        .footer-copy {
+          font-size: 0.8rem;
+          color: rgba(255,255,255,0.25);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+          .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 120px; }
+          .hero-visual { order: -1; }
+          .phone-mockup { width: 220px; }
+          .fb-1, .fb-2 { display: none; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .stat-card:nth-child(2) { border-radius: 0; }
+          .stat-card:nth-child(3) { border-radius: 0; }
+          .services-grid { grid-template-columns: repeat(2, 1fr); }
+          .footer-grid { grid-template-columns: 1fr 1fr; }
+          .nav-links { display: none; }
+          .hamburger { display: flex; }
+          .section-header { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 560px) {
+          .services-grid { grid-template-columns: 1fr; }
+          .stats-grid { grid-template-columns: 1fr 1fr; }
+          .footer-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
+
+      {/* Custom Cursor */}
+      <div
+        className={`custom-cursor ${cursorVisible ? "" : "hidden"}`}
+        style={{ left: cursorPos.x, top: cursorPos.y }}
+      />
+
+      {/* Mobile Menu */}
+      <nav className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        {NAV_LINKS.map((l) => (
+          <a key={l} href="#" onClick={() => setMenuOpen(false)}>{l}</a>
+        ))}
+        <a href="#" onClick={() => setMenuOpen(false)} style={{ color: "var(--green)" }}>Download App</a>
+      </nav>
+
+      {/* Navbar */}
+      <header className={`navbar ${scrolled ? "scrolled" : "top"}`}>
+        <a href="#" className="logo">
+          <span className="logo-dot" />
+          gojek
+        </a>
+        <ul className="nav-links">
+          {NAV_LINKS.map((l) => (
+            <li key={l}><a href="#">{l}</a></li>
+          ))}
+          <li><a href="#" className="nav-cta">Download App</a></li>
+        </ul>
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          <span style={menuOpen ? { transform: "rotate(45deg) translate(5px, 5px)" } : {}} />
+          <span style={menuOpen ? { opacity: 0 } : {}} />
+          <span style={menuOpen ? { transform: "rotate(-45deg) translate(5px, -5px)" } : {}} />
+        </button>
+      </header>
+
+      {/* Hero */}
+      <section className="hero" ref={heroSection.ref}>
+        <div className="hero-bg-shape" />
+        <div className="hero-content">
+          <div className="hero-badge">
+            <span className="hero-badge-dot" />
+            Super App #1 Indonesia
+          </div>
+          <h1 className="hero-title">
+            Solusi untuk<br />
+            <span className="accent">setiap hari</span>,<br />
+            dalam satu app.
+          </h1>
+          <p className="hero-sub">
+            Dari perjalanan, makanan, belanja, sampai pembayaran — semua ada di Gojek. Mudah, cepat, dan bisa kamu andalkan kapanpun.
+          </p>
+          <div className="hero-actions">
+            <button className="btn-primary">Download Sekarang</button>
+            <button className="btn-secondary">Lihat Layanan →</button>
+          </div>
+        </div>
+
+        <div className="hero-visual">
+          <div className="floating-badge fb-1">
+            <span style={{ fontSize: "1.1rem" }}>🚗</span>
+            <span>Driver tiba <strong>3 menit</strong></span>
+          </div>
+          <div className="floating-badge fb-2">
+            <span className="fb-dot" style={{ background: "#E53935" }} />
+            <span>GoFood dipesan — <strong>25 menit</strong></span>
+          </div>
+          <div className="phone-mockup">
+            <div className="phone-notch" />
+            <div className="phone-screen">
+              <div className="phone-greeting">Selamat pagi! 👋</div>
+              <div className="phone-name">Halo, Sobat Gojek</div>
+              <div className="phone-balance-card">
+                <div className="phone-balance-label">GoPay Balance</div>
+                <div className="phone-balance-amount">Rp 250.000</div>
+              </div>
+              <div className="phone-app-grid">
+                {[
+                  { emoji: "🏍️", bg: "#1a3c1a" },
+                  { emoji: "🚗", bg: "#1a3c1a" },
+                  { emoji: "🍜", bg: "#3c1a1a" },
+                  { emoji: "🛒", bg: "#3c1a1a" },
+                  { emoji: "📦", bg: "#1a3c1a" },
+                  { emoji: "💊", bg: "#1a2a3c" },
+                  { emoji: "💼", bg: "#1a2a3c" },
+                  { emoji: "💳", bg: "#2a1a3c" },
+                ].map((app, i) => (
+                  <div key={i} className="phone-app-icon" style={{ background: app.bg }}>
+                    {app.emoji}
+                  </div>
+                ))}
+              </div>
+              <div className="phone-quick-order">
+                <div className="phone-quick-icon">🍜</div>
+                <div>
+                  <div className="phone-quick-title">Pesan lagi?</div>
+                  <div className="phone-quick-text">Ayam Geprek Bensu · 2km</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="stats-section" ref={statsSection.ref}>
+        <div className="stats-label">Angka yang bicara sendiri</div>
+        <div className="stats-grid">
+          {STATS.map((stat) => (
+            <AnimatedStat key={stat.label} stat={stat} active={statsSection.inView} />
+          ))}
+        </div>
+      </section>
+
+      {/* Services */}
+      <section className="services-section">
+        <div className="section-header">
+          <div>
+            <div className="section-eyebrow">Layanan Kami</div>
+            <h2 className="section-title">Semua yang kamu<br />butuhkan, ada di sini</h2>
+          </div>
+          <div className="category-tabs">
+            {(["all", "transport", "food", "business"] as const).map((cat) => (
+              <button
+                key={cat}
+                className={`tab ${activeCategory === cat ? "active" : ""}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {{ all: "Semua", transport: "🚗 Transport", food: "🍜 Makanan", business: "💼 Bisnis" }[cat]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="services-grid">
+          {filtered.map((s, i) => (
+            <ServiceCard key={s.id} service={s} index={i} />
+          ))}
+        </div>
+      </section>
+
+      {/* Partners Ticker */}
+      <section className="partners-section">
+        <div className="section-eyebrow" style={{ textAlign: "center" }}>Dipercaya oleh jutaan pengguna</div>
+        <div className="partner-scroll">
+          <div className="partner-track">
+            {[
+              "McDonald's", "KFC", "Starbucks", "Indomaret", "Alfamart",
+              "J&T Express", "JNE", "BCA", "Mandiri", "BNI", "Tokopedia",
+              "McDonald's", "KFC", "Starbucks", "Indomaret", "Alfamart",
+              "J&T Express", "JNE", "BCA", "Mandiri", "BNI", "Tokopedia",
+            ].map((name, i) => (
+              <div key={i} className="partner-card">{name}</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="cta-section">
+        <div className="cta-inner">
+          <div className="cta-pattern" />
+          <h2 className="cta-title">Mulai perjalananmu<br />bersama Gojek hari ini</h2>
+          <p className="cta-sub">Unduh aplikasinya, nikmati kemudahan di setiap momen.</p>
+          <div className="cta-buttons">
+            <button className="app-btn">
+              <span className="app-btn-icon">🍎</span>
+              App Store
+            </button>
+            <button className="app-btn">
+              <span className="app-btn-icon">▶️</span>
+              Play Store
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-grid">
+          <div>
+            <div className="footer-brand">gojek</div>
+            <p className="footer-tagline">Menghadirkan solusi teknologi untuk kehidupan sehari-hari masyarakat Indonesia.</p>
+          </div>
+          {[
+            { heading: "Perusahaan", links: ["Tentang Kami", "Produk", "Blog", "Berita"] },
+            { heading: "Gabung", links: ["Mitra Driver", "Mitra Usaha", "GoAds", "GoCorp"] },
+            { heading: "Bantuan", links: ["Pusat Bantuan", "Lokasi Kami", "Karir", "Hubungi Kami"] },
+          ].map((col) => (
+            <div key={col.heading}>
+              <div className="footer-heading">{col.heading}</div>
+              <ul className="footer-links">
+                {col.links.map((l) => (
+                  <li key={l}><a href="#">{l}</a></li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="footer-bottom">
+          <span className="footer-copy">© 2025 Gojek. Semua hak dilindungi.</span>
+          <span className="footer-copy">Made with 💚 in Indonesia</span>
+        </div>
+      </footer>
+    </>
   );
 }
