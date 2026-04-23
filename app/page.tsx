@@ -939,7 +939,7 @@ export default function GojekLanding() {
             harianmu.
           </h1>
           <p className="hero-sub">
-            Mau pergi, mau makan, mau kirim barang — buka Gojek aja. Sudah dipakai jutaan orang Indonesia setiap hari.
+            Mau pergi, mau makan, mau kirim barang, buka Gojek aja. Sudah dipakai jutaan orang Indonesia setiap hari.
           </p>
           <div className="hero-actions">
             <a href="https://apps.apple.com/us/app/gojek/id944875099" target="_blank" rel="noopener noreferrer" className="store-btn">
