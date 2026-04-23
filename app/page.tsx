@@ -417,106 +417,22 @@ export default function GojekLanding() {
         }
 
         .phone-mockup {
-          width: 280px;
-          background: var(--black);
-          border-radius: 36px;
-          padding: 16px;
-          box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.1);
+          width: 300px;
           position: relative;
           animation: float 4s ease-in-out infinite;
+          filter: drop-shadow(0 24px 48px rgba(0,0,0,0.18));
+        }
+
+        .phone-mockup-img {
+          width: 100%;
+          height: auto;
+          display: block;
         }
 
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-14px); }
         }
-
-        .phone-notch {
-          width: 80px; height: 22px;
-          background: #1a1a1a;
-          border-radius: 20px;
-          margin: 0 auto 16px;
-        }
-
-        .phone-screen {
-          background: #0D0D0D;
-          border-radius: 24px;
-          padding: 20px 16px;
-          min-height: 460px;
-        }
-
-        .phone-app-grid {
-          display: grid; grid-template-columns: repeat(4, 1fr);
-          gap: 10px; margin-top: 8px;
-        }
-
-        .phone-app-icon {
-          aspect-ratio: 1;
-          border-radius: 14px;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1.3rem;
-          transition: transform 0.2s;
-        }
-        .phone-app-icon:hover { transform: scale(1.1); }
-
-        .phone-greeting {
-          font-size: 0.6rem;
-          color: rgba(255,255,255,0.5);
-          margin-bottom: 4px;
-          font-family: var(--font-body);
-        }
-        .phone-name {
-          font-family: var(--font-display);
-          font-size: 1rem;
-          color: white;
-          margin-bottom: 16px;
-        }
-
-        .phone-balance-card {
-          background: var(--green);
-          border-radius: 16px;
-          padding: 14px;
-          margin-bottom: 16px;
-        }
-        .phone-balance-label {
-          font-size: 0.55rem;
-          color: rgba(255,255,255,0.8);
-          font-family: var(--font-body);
-        }
-        .phone-balance-amount {
-          font-family: var(--font-display);
-          font-size: 1.2rem;
-          color: white;
-          margin-top: 2px;
-        }
-
-        .phone-quick-order {
-          background: #1a1a1a;
-          border-radius: 14px;
-          padding: 12px;
-          margin-top: 14px;
-          display: flex; align-items: center; gap: 10px;
-        }
-        .phone-quick-icon {
-          width: 36px; height: 36px;
-          background: var(--green);
-          border-radius: 10px;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1rem;
-        }
-        .phone-quick-text {
-          font-size: 0.6rem;
-          color: rgba(255,255,255,0.6);
-          font-family: var(--font-body);
-        }
-        .phone-quick-title {
-          font-size: 0.75rem;
-          color: white;
-          font-weight: 600;
-          margin-bottom: 2px;
-          font-family: var(--font-body);
-        }
-
         .floating-badge {
           position: absolute;
           background: white;
@@ -875,7 +791,7 @@ export default function GojekLanding() {
         @media (max-width: 900px) {
           .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 120px; }
           .hero-visual { order: -1; }
-          .phone-mockup { width: 220px; }
+          .phone-mockup { width: 200px; }
           .fb-1, .fb-2 { display: none; }
           .stats-grid { grid-template-columns: repeat(2, 1fr); }
           .stat-card:nth-child(2) { border-radius: 0; }
@@ -970,41 +886,17 @@ export default function GojekLanding() {
           </div>
           <div className="floating-badge fb-2">
             <span className="fb-dot" style={{ background: "#E53935" }} />
-            <span>GoFood sampai <strong>25 menit</strong></span>
+            <span>GoFood sampai dalam <strong>25 menit</strong></span>
           </div>
           <div className="phone-mockup">
-            <div className="phone-notch" />
-            <div className="phone-screen">
-              <div className="phone-greeting">Selamat pagi! 👋</div>
-              <div className="phone-name">Halo, Arkan</div>
-              <div className="phone-balance-card">
-                <div className="phone-balance-label">Saldo GoPay</div>
-                <div className="phone-balance-amount">Rp 25.000.000</div>
-              </div>
-              <div className="phone-app-grid">
-                {[
-                  { emoji: "🏍️", bg: "#1a3c1a" },
-                  { emoji: "🚗", bg: "#1a3c1a" },
-                  { emoji: "🍜", bg: "#3c1a1a" },
-                  { emoji: "🛒", bg: "#3c1a1a" },
-                  { emoji: "📦", bg: "#1a3c1a" },
-                  { emoji: "💊", bg: "#1a2a3c" },
-                  { emoji: "💼", bg: "#1a2a3c" },
-                  { emoji: "💳", bg: "#2a1a3c" },
-                ].map((app, i) => (
-                  <div key={i} className="phone-app-icon" style={{ background: app.bg }}>
-                    {app.emoji}
-                  </div>
-                ))}
-              </div>
-              <div className="phone-quick-order">
-                <div className="phone-quick-icon">🍜</div>
-                <div>
-                  <div className="phone-quick-title">Pesan lagi?</div>
-                  <div className="phone-quick-text">Ayam Geprek Bensu · 2 km</div>
-                </div>
-              </div>
-            </div>
+            <Image
+              src="/assets/HoverHP.png"
+              alt="Gojek App"
+              width={300}
+              height={600}
+              className="phone-mockup-img"
+              priority
+            />
           </div>
         </div>
       </section>
