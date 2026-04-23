@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Service {
   id: string;
   name: string;
-  emoji: string;
+  icon: string;
   desc: string;
-  category: "transport" | "food" | "business";
+  category: "transport" | "food";
   color: string;
 }
 
@@ -20,12 +21,10 @@ interface Stat {
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const SERVICES: Service[] = [
-  { id: "goride", name: "GoRide", emoji: "🏍️", desc: "Ojek online cepat dan terpercaya ke mana pun kamu mau", category: "transport", color: "#00AA13" },
-  { id: "gocar", name: "GoCar", emoji: "🚗", desc: "Mobil nyaman untuk perjalanan harian kamu", category: "transport", color: "#00AA13" },
-  { id: "gosend", name: "GoSend", emoji: "📦", desc: "Kirim barang dan dokumen dalam hitungan menit", category: "transport", color: "#00AA13" },
-  { id: "gofood", name: "GoFood", emoji: "🍜", desc: "Pesan makanan favoritmu dari ratusan restoran terdekat", category: "food", color: "#E53935" },
-  { id: "gomart", name: "GoMart", emoji: "🛒", desc: "Belanja kebutuhan sehari-hari langsung dari rumah", category: "food", color: "#E53935" },
-  { id: "gobiz", name: "GoBiz", emoji: "💼", desc: "Solusi lengkap untuk kelola dan kembangkan bisnismu", category: "business", color: "#1565C0" },
+  { id: "goride", name: "GoRide", icon: "/assets/Goride.svg", desc: "Naik ojek online, pesan dalam hitungan detik. Sampai lebih cepat dari jalan kaki.", category: "transport", color: "#00AA13" },
+  { id: "gocar", name: "GoCar", icon: "/assets/Gocar.svg", desc: "Pergi ke mana aja pakai mobil. Nyaman, ber-AC, dan harganya bisa kamu tahu dari awal.", category: "transport", color: "#00AA13" },
+  { id: "gosend", name: "GoSend", icon: "/assets/Gosend.svg", desc: "Kirim barang hari ini, terima hari ini. Buat yang nggak mau nunggu lama.", category: "transport", color: "#00AA13" },
+  { id: "gofood", name: "GoFood", icon: "/assets/Gofood.svg", desc: "Lapar tapi males keluar? Pesan dari ribuan restoran dan warung terdekat di kotamu.", category: "food", color: "#E53935" },
 ];
 
 const STATS: Stat[] = [
@@ -33,6 +32,20 @@ const STATS: Stat[] = [
   { value: "20.1", label: "Juta Mitra Usaha", suffix: "jt+" },
   { value: "2", label: "Negara Operasional", suffix: " negara" },
   { value: "190", label: "Kota di Indonesia", suffix: "+ kota" },
+];
+
+const PARTNERS = [
+  { name: "McDonald's", src: "/assets/McDonalds.svg" },
+  { name: "Tokopedia", src: "/assets/Tokopedia.svg" },
+  { name: "KFC", src: "/assets/KFC.svg" },
+  { name: "Starbucks", src: "/assets/Starbucks.svg" },
+  { name: "Alfamart", src: "/assets/Alfamart.svg" },
+  { name: "Indomaret", src: "/assets/Indomaret.svg" },
+  { name: "J&T Express", src: "/assets/J&T.svg" },
+  { name: "JNE", src: "/assets/JNE.png" },
+  { name: "BCA", src: "/assets/BCA.svg" },
+  { name: "BNI", src: "/assets/BNI.svg" },
+  { name: "Bank Mandiri", src: "/assets/Mandiri.svg" },
 ];
 
 const NAV_LINKS = ["Layanan", "Mitra", "Karir", "Blog"];
@@ -91,8 +104,9 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="service-emoji">{service.emoji}</div>
-      <h3 className="service-name">{service.name}</h3>
+      <div className="service-icon">
+        <Image src={service.icon} alt={service.name} width={140} height={140} style={{ width: "140px", height: "140px", objectFit: "contain" }} />
+      </div>
       <p className="service-desc">{service.desc}</p>
       <div className="service-arrow" style={{ color: service.color }}>→</div>
     </div>
@@ -101,7 +115,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function GojekLanding() {
-  const [activeCategory, setActiveCategory] = useState<"all" | "transport" | "food" | "business">("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "transport" | "food">("all");
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -135,8 +149,6 @@ export default function GojekLanding() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap');
-
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
@@ -148,8 +160,8 @@ export default function GojekLanding() {
           --grey-200: #E8E8E8;
           --grey-400: #9A9A9A;
           --grey-700: #3A3A3A;
-          --font-body: 'DM Sans', sans-serif;
-          --font-display: 'DM Serif Display', serif;
+          --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+          --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
           --radius: 16px;
           --shadow: 0 2px 24px rgba(0,0,0,0.07);
           --shadow-lg: 0 8px 48px rgba(0,0,0,0.12);
@@ -198,19 +210,9 @@ export default function GojekLanding() {
         .navbar.top { background: transparent; }
 
         .logo {
-          display: flex; align-items: center; gap: 10px;
-          font-family: var(--font-display);
-          font-size: 1.4rem;
-          font-weight: 800;
-          color: var(--green);
+          display: flex; align-items: center;
           text-decoration: none;
-          letter-spacing: -0.5px;
-        }
-        .logo-dot {
-          width: 10px; height: 10px;
-          background: var(--green);
-          border-radius: 50%;
-          display: inline-block;
+          line-height: 0;
         }
 
         .nav-links {
@@ -343,10 +345,10 @@ export default function GojekLanding() {
 
         .hero-title {
           font-family: var(--font-display);
-          font-size: clamp(2.6rem, 5vw, 4.2rem);
+          font-size: clamp(2.4rem, 4.5vw, 3.8rem);
           font-weight: 800;
-          line-height: 1.08;
-          letter-spacing: -1.5px;
+          line-height: 1.1;
+          letter-spacing: -1px;
           color: var(--black);
           margin-bottom: 20px;
           opacity: 0;
@@ -564,7 +566,7 @@ export default function GojekLanding() {
           font-size: clamp(2rem, 3.5vw, 3rem);
           font-weight: 800;
           color: var(--green);
-          letter-spacing: -1px;
+          letter-spacing: -0.5px;
         }
         .stat-label {
           font-size: 0.82rem;
@@ -595,10 +597,10 @@ export default function GojekLanding() {
         }
         .section-title {
           font-family: var(--font-display);
-          font-size: clamp(2rem, 3.5vw, 2.8rem);
+          font-size: clamp(1.8rem, 3vw, 2.4rem);
           font-weight: 800;
-          letter-spacing: -1px;
-          line-height: 1.1;
+          letter-spacing: -0.5px;
+          line-height: 1.2;
         }
         .category-tabs {
           display: flex; gap: 8px; flex-wrap: wrap;
@@ -620,14 +622,14 @@ export default function GojekLanding() {
 
         .services-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(4, 1fr);
           gap: 16px;
         }
 
         .service-card {
           background: var(--grey-100);
           border-radius: var(--radius);
-          padding: 28px 24px;
+          padding: 32px 24px;
           cursor: pointer;
           transition: all var(--transition);
           position: relative;
@@ -635,6 +637,9 @@ export default function GojekLanding() {
           border: 2px solid transparent;
           opacity: 0;
           animation: fadeUp 0.5s forwards;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
         }
         .service-card::before {
           content: '';
@@ -650,13 +655,16 @@ export default function GojekLanding() {
         }
         .service-card.hovered::before { opacity: 0.04; }
 
-        .service-emoji { font-size: 2rem; margin-bottom: 12px; position: relative; z-index: 1; }
-        .service-name {
-          font-family: var(--font-display);
-          font-size: 1.1rem;
-          font-weight: 800;
-          margin-bottom: 8px;
-          position: relative; z-index: 1;
+        .service-icon {
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 1;
+          line-height: 0;
+          width: 140px;
+          height: 140px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .service-desc {
           font-size: 0.85rem;
@@ -676,33 +684,60 @@ export default function GojekLanding() {
         /* Partners */
         .partners-section {
           background: var(--grey-100);
-          padding: 80px 5vw;
+          padding: 72px 0;
         }
-        .partner-scroll {
-          overflow: hidden; position: relative;
-          margin-top: 40px;
+        .partners-eyebrow {
+          text-align: center;
+          margin-bottom: 40px;
+          padding: 0 5vw;
         }
-        .partner-track {
-          display: flex; gap: 16px;
-          animation: scroll 20s linear infinite;
+        .partners-strip {
+          overflow: hidden;
+          position: relative;
+          width: 100%;
+        }
+        .partners-strip::before,
+        .partners-strip::after {
+          content: '';
+          position: absolute;
+          top: 0; bottom: 0;
+          width: 100px;
+          z-index: 2;
+          pointer-events: none;
+        }
+        .partners-strip::before {
+          left: 0;
+          background: linear-gradient(to right, var(--grey-100), transparent);
+        }
+        .partners-strip::after {
+          right: 0;
+          background: linear-gradient(to left, var(--grey-100), transparent);
+        }
+        .partners-track {
+          display: flex;
+          align-items: center;
           width: max-content;
+          animation: marquee 36s linear infinite;
         }
-        @keyframes scroll {
+        @keyframes marquee {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
         }
-        .partner-card {
-          background: white;
-          border-radius: 12px;
-          padding: 16px 28px;
-          font-weight: 700;
-          font-size: 0.9rem;
-          color: var(--grey-700);
-          white-space: nowrap;
-          border: 1px solid var(--grey-200);
-          transition: border-color var(--transition), color var(--transition);
+        .partner-logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 160px;
+          height: 72px;
+          flex-shrink: 0;
+          padding: 16px 24px;
         }
-        .partner-card:hover { border-color: var(--green); color: var(--green); }
+        .partner-logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+        }
 
         /* CTA */
         .cta-section {
@@ -724,10 +759,10 @@ export default function GojekLanding() {
         }
         .cta-title {
           font-family: var(--font-display);
-          font-size: clamp(2rem, 4vw, 3.2rem);
+          font-size: clamp(1.8rem, 3.5vw, 2.8rem);
           font-weight: 800;
           color: white;
-          letter-spacing: -1px;
+          letter-spacing: -0.5px;
           margin-bottom: 16px;
           position: relative;
         }
@@ -742,21 +777,51 @@ export default function GojekLanding() {
           justify-content: center; flex-wrap: wrap;
           position: relative;
         }
-        .app-btn {
+        .store-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
           background: white;
           color: var(--black);
-          border: none;
-          padding: 14px 24px;
-          border-radius: 14px;
-          font-family: var(--font-body);
-          font-weight: 700;
-          font-size: 0.9rem;
-          cursor: pointer;
+          border-radius: 12px;
+          padding: 10px 18px;
+          text-decoration: none;
           transition: transform var(--transition), box-shadow var(--transition);
-          display: flex; align-items: center; gap: 10px;
+          border: 1px solid var(--grey-200);
+          min-width: 148px;
         }
-        .app-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
-        .app-btn-icon { font-size: 1.3rem; }
+        .store-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        .store-btn-icon {
+          width: 28px;
+          height: 28px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .store-btn-text {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.2;
+        }
+        .store-btn-sub {
+          font-size: 0.65rem;
+          color: var(--grey-400);
+          font-weight: 500;
+        }
+        .store-btn-label {
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--black);
+        }
+        /* CTA section store buttons — white bg already dark, invert */
+        .cta-buttons .store-btn {
+          background: white;
+          border-color: transparent;
+        }
 
         /* Footer */
         .footer {
@@ -770,13 +835,7 @@ export default function GojekLanding() {
           gap: 48px;
           margin-bottom: 48px;
         }
-        .footer-brand {
-          font-family: var(--font-display);
-          font-size: 1.6rem;
-          font-weight: 800;
-          color: var(--green);
-          margin-bottom: 14px;
-        }
+        .footer-brand { margin-bottom: 14px; line-height: 0; }
         .footer-tagline {
           font-size: 0.85rem;
           color: rgba(255,255,255,0.4);
@@ -828,7 +887,7 @@ export default function GojekLanding() {
           .section-header { flex-direction: column; align-items: flex-start; }
         }
         @media (max-width: 560px) {
-          .services-grid { grid-template-columns: 1fr; }
+          .services-grid { grid-template-columns: repeat(2, 1fr); }
           .stats-grid { grid-template-columns: 1fr 1fr; }
           .footer-grid { grid-template-columns: 1fr; }
         }
@@ -845,20 +904,19 @@ export default function GojekLanding() {
         {NAV_LINKS.map((l) => (
           <a key={l} href="#" onClick={() => setMenuOpen(false)}>{l}</a>
         ))}
-        <a href="#" onClick={() => setMenuOpen(false)} style={{ color: "var(--green)" }}>Download App</a>
+        <a href="#" onClick={() => setMenuOpen(false)} style={{ color: "var(--green)" }}>Unduh Aplikasi</a>
       </nav>
 
       {/* Navbar */}
       <header className={`navbar ${scrolled ? "scrolled" : "top"}`}>
         <a href="#" className="logo">
-          <span className="logo-dot" />
-          gojek
+          <Image src="/assets/Gojek.svg" alt="Gojek" width={80} height={28} />
         </a>
         <ul className="nav-links">
           {NAV_LINKS.map((l) => (
             <li key={l}><a href="#">{l}</a></li>
           ))}
-          <li><a href="#" className="nav-cta">Download App</a></li>
+          <li><a href="#" className="nav-cta">Unduh Aplikasi</a></li>
         </ul>
         <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
           <span style={menuOpen ? { transform: "rotate(45deg) translate(5px, 5px)" } : {}} />
@@ -873,39 +931,55 @@ export default function GojekLanding() {
         <div className="hero-content">
           <div className="hero-badge">
             <span className="hero-badge-dot" />
-            Super App #1 Indonesia
+            Aplikasi #1 di Indonesia
           </div>
           <h1 className="hero-title">
-            Solusi untuk<br />
-            <span className="accent">setiap hari</span>,<br />
-            dalam satu app.
+            Satu aplikasi<br />
+            buat <span className="accent">semua kebutuhan</span><br />
+            harianmu.
           </h1>
           <p className="hero-sub">
-            Dari perjalanan, makanan, belanja, sampai pembayaran — semua ada di Gojek. Mudah, cepat, dan bisa kamu andalkan kapanpun.
+            Mau pergi, mau makan, mau kirim barang — buka Gojek aja. Sudah dipakai jutaan orang Indonesia setiap hari.
           </p>
           <div className="hero-actions">
-            <button className="btn-primary">Download Sekarang</button>
-            <button className="btn-secondary">Lihat Layanan →</button>
+            <a href="https://apps.apple.com/us/app/gojek/id944875099" target="_blank" rel="noopener noreferrer" className="store-btn">
+              <span className="store-btn-icon">
+                <Image src="/assets/AppStore.svg" alt="" width={24} height={24} />
+              </span>
+              <span className="store-btn-text">
+                <span className="store-btn-sub">Unduh di</span>
+                <span className="store-btn-label">App Store</span>
+              </span>
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.gojek.app&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="store-btn">
+              <span className="store-btn-icon">
+                <Image src="/assets/GooglePlay.svg" alt="" width={24} height={24} />
+              </span>
+              <span className="store-btn-text">
+                <span className="store-btn-sub">Tersedia di</span>
+                <span className="store-btn-label">Google Play</span>
+              </span>
+            </a>
           </div>
         </div>
 
         <div className="hero-visual">
           <div className="floating-badge fb-1">
-            <span style={{ fontSize: "1.1rem" }}>🚗</span>
-            <span>Driver tiba <strong>3 menit</strong></span>
+            <span className="fb-dot" style={{ background: "#00AA13" }} />
+            <span>Driver tiba dalam <strong>3 menit</strong></span>
           </div>
           <div className="floating-badge fb-2">
             <span className="fb-dot" style={{ background: "#E53935" }} />
-            <span>GoFood dipesan — <strong>25 menit</strong></span>
+            <span>GoFood sampai <strong>25 menit</strong></span>
           </div>
           <div className="phone-mockup">
             <div className="phone-notch" />
             <div className="phone-screen">
               <div className="phone-greeting">Selamat pagi! 👋</div>
-              <div className="phone-name">Halo, Sobat Gojek</div>
+              <div className="phone-name">Halo, Arkan</div>
               <div className="phone-balance-card">
-                <div className="phone-balance-label">GoPay Balance</div>
-                <div className="phone-balance-amount">Rp 250.000</div>
+                <div className="phone-balance-label">Saldo GoPay</div>
+                <div className="phone-balance-amount">Rp 25.000.000</div>
               </div>
               <div className="phone-app-grid">
                 {[
@@ -927,7 +1001,7 @@ export default function GojekLanding() {
                 <div className="phone-quick-icon">🍜</div>
                 <div>
                   <div className="phone-quick-title">Pesan lagi?</div>
-                  <div className="phone-quick-text">Ayam Geprek Bensu · 2km</div>
+                  <div className="phone-quick-text">Ayam Geprek Bensu · 2 km</div>
                 </div>
               </div>
             </div>
@@ -937,7 +1011,7 @@ export default function GojekLanding() {
 
       {/* Stats */}
       <section className="stats-section" ref={statsSection.ref}>
-        <div className="stats-label">Angka yang bicara sendiri</div>
+        <div className="stats-label">Gojek dalam angka</div>
         <div className="stats-grid">
           {STATS.map((stat) => (
             <AnimatedStat key={stat.label} stat={stat} active={statsSection.inView} />
@@ -950,16 +1024,16 @@ export default function GojekLanding() {
         <div className="section-header">
           <div>
             <div className="section-eyebrow">Layanan Kami</div>
-            <h2 className="section-title">Semua yang kamu<br />butuhkan, ada di sini</h2>
+            <h2 className="section-title">Ada apa aja<br />di Gojek?</h2>
           </div>
           <div className="category-tabs">
-            {(["all", "transport", "food", "business"] as const).map((cat) => (
+            {(["all", "transport", "food"] as const).map((cat) => (
               <button
                 key={cat}
                 className={`tab ${activeCategory === cat ? "active" : ""}`}
                 onClick={() => setActiveCategory(cat)}
               >
-                {{ all: "Semua", transport: "🚗 Transport", food: "🍜 Makanan", business: "💼 Bisnis" }[cat]}
+                {{ all: "Semua", transport: "🚗 Transport", food: "🍜 Makanan" }[cat]}
               </button>
             ))}
           </div>
@@ -971,18 +1045,21 @@ export default function GojekLanding() {
         </div>
       </section>
 
-      {/* Partners Ticker */}
+      {/* Partners */}
       <section className="partners-section">
-        <div className="section-eyebrow" style={{ textAlign: "center" }}>Dipercaya oleh jutaan pengguna</div>
-        <div className="partner-scroll">
-          <div className="partner-track">
-            {[
-              "McDonald's", "KFC", "Starbucks", "Indomaret", "Alfamart",
-              "J&T Express", "JNE", "BCA", "Mandiri", "BNI", "Tokopedia",
-              "McDonald's", "KFC", "Starbucks", "Indomaret", "Alfamart",
-              "J&T Express", "JNE", "BCA", "Mandiri", "BNI", "Tokopedia",
-            ].map((name, i) => (
-              <div key={i} className="partner-card">{name}</div>
+        <div className="partners-eyebrow section-eyebrow">Tersedia di ribuan tempat yang kamu kunjungi setiap hari</div>
+        <div className="partners-strip">
+          <div className="partners-track">
+            {[...PARTNERS, ...PARTNERS].map((p, i) => (
+              <div key={i} className="partner-logo">
+                <Image
+                  src={p.src}
+                  alt={p.name}
+                  width={112}
+                  height={40}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -992,17 +1069,27 @@ export default function GojekLanding() {
       <section className="cta-section">
         <div className="cta-inner">
           <div className="cta-pattern" />
-          <h2 className="cta-title">Mulai perjalananmu<br />bersama Gojek hari ini</h2>
-          <p className="cta-sub">Unduh aplikasinya, nikmati kemudahan di setiap momen.</p>
+          <h2 className="cta-title">Udah jutaan orang pakai.<br />Sekarang giliran kamu.</h2>
+          <p className="cta-sub">Unduh Gojek sekarang dan rasakan sendiri bedanya.</p>
           <div className="cta-buttons">
-            <button className="app-btn">
-              <span className="app-btn-icon">🍎</span>
-              App Store
-            </button>
-            <button className="app-btn">
-              <span className="app-btn-icon">▶️</span>
-              Play Store
-            </button>
+            <a href="https://apps.apple.com/us/app/gojek/id944875099" target="_blank" rel="noopener noreferrer" className="store-btn">
+              <span className="store-btn-icon">
+                <Image src="/assets/AppStore.svg" alt="" width={24} height={24} />
+              </span>
+              <span className="store-btn-text">
+                <span className="store-btn-sub">Unduh di</span>
+                <span className="store-btn-label">App Store</span>
+              </span>
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.gojek.app&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="store-btn">
+              <span className="store-btn-icon">
+                <Image src="/assets/GooglePlay.svg" alt="" width={24} height={24} />
+              </span>
+              <span className="store-btn-text">
+                <span className="store-btn-sub">Tersedia di</span>
+                <span className="store-btn-label">Google Play</span>
+              </span>
+            </a>
           </div>
         </div>
       </section>
@@ -1011,8 +1098,10 @@ export default function GojekLanding() {
       <footer className="footer">
         <div className="footer-grid">
           <div>
-            <div className="footer-brand">gojek</div>
-            <p className="footer-tagline">Menghadirkan solusi teknologi untuk kehidupan sehari-hari masyarakat Indonesia.</p>
+            <div className="footer-brand">
+              <Image src="/assets/Gojek.svg" alt="Gojek" width={88} height={30} style={{ filter: "brightness(0) invert(1)" }} />
+            </div>
+            <p className="footer-tagline">Aplikasi yang menemani jutaan orang Indonesia dalam keseharian mereka.</p>
           </div>
           {[
             { heading: "Perusahaan", links: ["Tentang Kami", "Produk", "Blog", "Berita"] },
@@ -1031,7 +1120,6 @@ export default function GojekLanding() {
         </div>
         <div className="footer-bottom">
           <span className="footer-copy">© 2025 Gojek. Semua hak dilindungi.</span>
-          <span className="footer-copy">Made with 💚 in Indonesia</span>
         </div>
       </footer>
     </>
